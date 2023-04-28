@@ -4,6 +4,7 @@ import (
 	"go_mini-project/lib/database"
 	"go_mini-project/models"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -86,5 +87,50 @@ func DeleteUserByIdController(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, models.Response{
 		Message: "success delete user by id",
+	})
+}
+
+// Login User With JWT
+func LoginUserController(c echo.Context) error {
+	user := models.User{}
+	c.Bind(&user)
+
+	users, e := database.LoginUser(&user)
+	if e != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, models.Response{
+			Message: "failed login user",
+			Data:    e.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, models.Response{
+		Message: "success login user",
+		Data:    users,
+	})
+}
+
+// Detail Users Check by Id
+func GetUserDetailController(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, models.Response{
+			Message: "failed get user detail",
+			Data:    err.Error(),
+		})
+	}
+
+	users, err := database.GetDetailUsers((id))
+
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, models.Response{
+			Message: "failed get user detail",
+			Data:    err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, models.Response{
+		Message: "success get user detail",
+		Data:    users,
 	})
 }
