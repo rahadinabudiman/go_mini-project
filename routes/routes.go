@@ -11,13 +11,17 @@ import (
 func New() *echo.Echo {
 	e := echo.New()
 
+	// Login dan Register users
+	e.POST("/users/register", controllers.CreateUserController)
+	e.POST("/users/login", controllers.LoginUserController)
+
+	// User Routes with JWT
 	user := e.Group("/users")
+	user.Use(middleware.JWT([]byte(constants.SECRET_JWT)))
 	user.GET("", controllers.GetUsersController)
 	user.GET("/:id", controllers.GetUserByIdController)
-	user.POST("", controllers.CreateUserController)
 	user.PUT("/:id", controllers.UpdateUserByIdController)
 	user.DELETE("/:id", controllers.DeleteUserByIdController)
-	user.POST("/login", controllers.LoginUserController)
 	user.GET("/profile/:id", controllers.GetUserDetailController)
 
 	// Review Routes
