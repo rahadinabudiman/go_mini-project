@@ -14,6 +14,7 @@ func New() *echo.Echo {
 	// Login dan Register users
 	e.POST("/users/register", controllers.CreateUserController)
 	e.POST("/users/login", controllers.LoginUserController)
+	e.GET("/trending", controllers.GetTrendingController)
 
 	// User Routes with JWT
 	user := e.Group("/users")
