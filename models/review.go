@@ -10,3 +10,12 @@ type Review struct {
 	Ulasan  string `json:"ulasan" form:"review_user"`
 	Rating  int    `json:"rating" form:"rating"`
 }
+
+// For Response Review Title
+type ReviewResponse struct {
+	UserID uint   `gorm:"foreignKey:user_id"`
+	Name   string `json:"name" form:"name"`
+	Title  string `json:"title" form:"title"`
+	Ulasan string `json:"ulasan" form:"review_user"`
+	Rating int    `json:"rating" form:"rating"`
+}

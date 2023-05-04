@@ -70,6 +70,35 @@ func GetReviewByIdController(c echo.Context) error {
 	})
 }
 
+func GetReviewByTitle(c echo.Context) error {
+	title := c.Param("title")
+
+	reviews, err := database.GetReviewByTitle(title)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	name, err := database.GetUserByIdReview(reviews[0].UserID)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	var reviewResponses []models.ReviewResponse
+	for _, review := range reviews {
+		reviewResponses = append(reviewResponses, models.ReviewResponse{
+			UserID: review.UserID,
+			Name:   name.Name,
+			Title:  review.Title,
+			Rating: review.Rating,
+			Ulasan: review.Ulasan,
+		})
+	}
+
+	return c.JSON(http.StatusOK, reviewResponses)
+}
+
 // Delete Review by Id
 func DeleteReviewByIdController(c echo.Context) error {
 	ReviewId := c.Param("id")

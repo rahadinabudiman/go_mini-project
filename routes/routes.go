@@ -33,6 +33,7 @@ func New() *echo.Echo {
 	review.GET("/:id", controllers.GetReviewByIdController)
 	review.DELETE("/:id", controllers.DeleteReviewByIdController)
 	review.PUT("/:id", controllers.UpdateReviewByIdController)
+	review.GET("/:title", controllers.GetReviewByTitle)
 
 	return e
 }

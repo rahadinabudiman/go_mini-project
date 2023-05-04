@@ -40,6 +40,18 @@ func GetReviewById(id any) (models.Review, error) {
 	return review, nil
 }
 
+func GetReviewByTitle(title string) ([]models.Review, error) {
+	var reviews []models.Review
+
+	err := config.DB.Where("title LIKE ?", "%"+title+"%").Find(&reviews).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return reviews, nil
+}
+
 // Delete Review By Id
 func DeleteReview(id any) (interface{}, error) {
 	err := config.DB.Where("id = ?", id).Delete(&models.Review{}).Error

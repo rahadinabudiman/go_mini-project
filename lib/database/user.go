@@ -42,6 +42,18 @@ func GetUserById(id any) (models.User, error) {
 	return user, nil
 }
 
+func GetUserByIdReview(id any) (models.User, error) {
+	var user models.User
+
+	err := config.DB.Where("id = ?", id).First(&user).Error
+
+	if err != nil {
+		return models.User{}, err
+	}
+
+	return user, nil
+}
+
 // Update user by id
 func UpdateUser(user models.User, id any) (models.User, error) {
 	err := config.DB.Table("users").Where("id = ?", id).Updates(&user).Error
