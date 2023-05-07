@@ -1,11 +1,10 @@
 package routes
 
 import (
-	"go_mini-project/constants"
 	"go_mini-project/controllers"
+	m "go_mini-project/middlewares"
 
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/echo"
 )
 
 func New() *echo.Echo {
@@ -18,8 +17,7 @@ func New() *echo.Echo {
 
 	// User Routes with JWT
 	user := e.Group("/users")
-	user.Use(middleware.JWT([]byte(constants.SECRET_JWT)))
-	user.GET("", controllers.GetUsersController)
+	user.GET("", controllers.GetUsersController, m.CheckLogin)
 	user.GET("/:id", controllers.GetUserByIdController)
 	user.PUT("/:id", controllers.UpdateUserByIdController)
 	user.DELETE("/:id", controllers.DeleteUserByIdController)
@@ -27,7 +25,6 @@ func New() *echo.Echo {
 
 	// Review Routes
 	review := e.Group("/reviews")
-	review.Use(middleware.JWT([]byte(constants.SECRET_JWT)))
 	review.POST("", controllers.CreateReviewController)
 	review.GET("", controllers.GetReviewsController)
 	review.GET("/:id", controllers.GetReviewByIdController)

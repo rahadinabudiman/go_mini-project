@@ -2,11 +2,12 @@ package controllers
 
 import (
 	"go_mini-project/lib/database"
+	"go_mini-project/middlewares"
 	"go_mini-project/models"
 	"net/http"
 	"strconv"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo"
 )
 
 // Get all user controller
@@ -95,7 +96,7 @@ func LoginUserController(c echo.Context) error {
 	user := models.User{}
 	c.Bind(&user)
 
-	users, e := database.LoginUser(&user)
+	user, e := database.LoginUser(user)
 	if e != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, models.Response{
 			Message: "failed login user",
@@ -103,9 +104,25 @@ func LoginUserController(c echo.Context) error {
 		})
 	}
 
+	token, err := middlewares.CreateToken(user.ID)
+
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, models.Response{
+			Message: "failed login user",
+			Data:    err.Error(),
+		})
+	}
+	middlewares.CreateCookie(c, token)
+
+	respontoken := models.UerToken{
+		Name:     user.Name,
+		Username: user.Username,
+		Token:    token,
+	}
+
 	return c.JSON(http.StatusOK, models.Response{
 		Message: "success login user",
-		Data:    users,
+		Data:    respontoken,
 	})
 }
 

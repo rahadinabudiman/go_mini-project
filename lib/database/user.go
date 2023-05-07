@@ -2,7 +2,6 @@ package database
 
 import (
 	"go_mini-project/config"
-	"go_mini-project/middlewares"
 	"go_mini-project/models"
 )
 
@@ -15,7 +14,6 @@ func GetUser() (users []models.User, err error) {
 	}
 
 	//make to return blog data
-
 	return
 }
 
@@ -76,19 +74,6 @@ func DeleteUser(id any) (interface{}, error) {
 	return "success delete user", nil
 }
 
-// Login User With JWT
-// func LoginUser(user models.User) (models.User, error) {
-
-// 	err := config.DB.Where("username = ? AND password = ?", user.Username, user.Password).First(&user).Error
-
-// 	if err != nil {
-// 		return models.User{}, err
-// 	}
-
-// 	return user, nil
-// }
-
-// Get Detail User JWT
 func GetDetailUsers(userId int) (interface{}, error) {
 	var user models.User
 
@@ -99,19 +84,11 @@ func GetDetailUsers(userId int) (interface{}, error) {
 }
 
 // Login User JWT
-func LoginUser(user *models.User) (interface{}, error) {
-	var err error
-	if err = config.DB.Where("username = ? AND password = ?", user.Username, user.Password).First(user).Error; err != nil {
-		return nil, err
-	}
+func LoginUser(user models.User) (models.User, error) {
+	err := config.DB.Where("username = ? AND password = ?", user.Username, user.Password).First(&user).Error
 
-	user.Token, err = middlewares.CreateToken(int(user.ID))
 	if err != nil {
-		return nil, err
-	}
-
-	if err := config.DB.Save(user).Error; err != nil {
-		return nil, err
+		return models.User{}, nil
 	}
 
 	return user, nil

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo"
 )
 
 // Create Review
@@ -46,6 +46,13 @@ func GetReviewsController(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	if len(reviews) == 0 {
+		return c.JSON(http.StatusOK, models.Response{
+			Message: "No reviews found",
+			Data:    nil,
+		})
 	}
 
 	return c.JSON(http.StatusOK, models.Response{

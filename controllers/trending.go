@@ -5,7 +5,7 @@ import (
 	"go_mini-project/models"
 	"net/http"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo"
 )
 
 func GetTrendingController(c echo.Context) error {
