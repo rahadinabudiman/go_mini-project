@@ -102,7 +102,6 @@ func GetReviewByTitle(c echo.Context) error {
 	var reviewResponses []models.ReviewResponse
 	for _, review := range reviews {
 		reviewResponses = append(reviewResponses, models.ReviewResponse{
-			UserID: review.UserID,
 			Name:   name.Name,
 			Title:  review.Title,
 			Rating: review.Rating,
@@ -149,10 +148,40 @@ func UpdateReviewByIdController(c echo.Context) error {
 		})
 	}
 
-	if review.UserID != uint(ReviewId) {
+	id, ok := c.Get("id").(int)
+	if !ok || id != int(review.UserID) {
 		return c.JSON(http.StatusBadRequest, models.Response{
-			Message: "UserID tidak boleh dirubah",
-			Data:    nil,
+			Message: "ID berbeda dengan user yang login",
+		})
+	}
+
+	// Mengambil ID dari Review
+	reviewIDBanget, err := database.GetReviewById(strconv.Itoa(int(ReviewId)))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	TitleReviewDatabase := reviewIDBanget.Title
+
+	// Mengambil UserID dari Review
+	user, err := database.GetReviewByUserId(review.UserID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	// Validasi jika mengedit review punya orang
+	if int(reviewIDBanget.UserID) != id {
+		return c.JSON(http.StatusBadRequest, models.Response{
+			Message: "Tidak Bisa Mengedit Review Orang Lain",
+		})
+	}
+
+	review.MovieID = user.MovieID
+
+	// Jika Judul Film Berbeda Pada Saat diedit, maka tidak bisa disimpan
+	if TitleReviewDatabase != review.Title {
+		return c.JSON(http.StatusBadRequest, models.Response{
+			Message: "Judul Film Tidak Boleh Diubah",
 		})
 	}
 

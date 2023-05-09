@@ -40,6 +40,19 @@ func GetReviewById(id any) (models.Review, error) {
 	return review, nil
 }
 
+// Get Review by id
+func GetReviewByUserId(id any) (models.Review, error) {
+	var review models.Review
+
+	err := config.DB.Where("user_id = ?", id).First(&review).Error
+
+	if err != nil {
+		return models.Review{}, err
+	}
+
+	return review, nil
+}
+
 func GetReviewByTitle(title string) ([]models.Review, error) {
 	var reviews []models.Review
 

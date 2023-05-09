@@ -40,6 +40,19 @@ func GetUserById(id any) (models.User, error) {
 	return user, nil
 }
 
+// Get user by id
+func GetUserByID(id any) (models.User, error) {
+	var user models.User
+
+	err := config.DB.Where("id = ?", id).First(&user).Error
+
+	if err != nil {
+		return models.User{}, err
+	}
+
+	return user, nil
+}
+
 func GetUserByIdReview(id any) (models.User, error) {
 	var user models.User
 

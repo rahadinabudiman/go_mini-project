@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"go_mini-project/constants"
+	"go_mini-project/models"
 	"net/http"
 	"time"
 
@@ -37,4 +38,37 @@ func ExtractTokenUserId(e echo.Context) int {
 		return userId
 	}
 	return 0
+}
+
+func JWTValidator(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		cookie, err := c.Cookie("JWTCookie")
+		if err != nil {
+			return c.JSON(http.StatusUnauthorized, models.Response{
+				Message: "Unauthorized",
+			})
+		}
+		token, err := jwt.Parse(cookie.Value, func(token *jwt.Token) (interface{}, error) {
+			return []byte(constants.SECRET_JWT), nil
+		})
+		if err != nil {
+			return c.JSON(http.StatusUnauthorized, models.Response{
+				Message: "Unauthorized",
+			})
+		}
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if !ok || !token.Valid {
+			return c.JSON(http.StatusUnauthorized, models.Response{
+				Message: "Unauthorized",
+			})
+		}
+		id, ok := claims["id"].(float64)
+		if !ok {
+			return c.JSON(http.StatusUnauthorized, models.Response{
+				Message: "Unauthorized",
+			})
+		}
+		c.Set("id", int(id))
+		return next(c)
+	}
 }
