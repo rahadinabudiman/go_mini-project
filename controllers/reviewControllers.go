@@ -187,23 +187,24 @@ func UpdateReviewByIdController(c echo.Context) error {
 		})
 	}
 
-	id, ok := c.Get("userId").(int)
-	if !ok || id != int(review.UserID) {
-		return c.JSON(http.StatusBadRequest, models.Response{
-			Message: "ID berbeda dengan user yang login",
-		})
-	}
-
 	// Mengambil ID dari Review
-	reviewIDBanget, err := database.GetReviewById(strconv.Itoa(int(ReviewId)))
+	reviewIDBanget, err := database.GetReviewById(ReviewId)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	TitleReviewDatabase := reviewIDBanget.Title
+	userIDDatabase := reviewIDBanget.UserID
+
+	id, ok := c.Get("userId").(int)
+	if !ok || id != int(userIDDatabase) {
+		return c.JSON(http.StatusBadRequest, models.Response{
+			Message: "ID berbeda dengan user yang login",
+		})
+	}
 
 	// Mengambil UserID dari Review
-	user, err := database.GetReviewByUserId(review.UserID)
+	user, err := database.GetReviewByUserId(reviewIDBanget.UserID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
@@ -216,6 +217,8 @@ func UpdateReviewByIdController(c echo.Context) error {
 	}
 
 	review.MovieID = user.MovieID
+	review.Title = TitleReviewDatabase
+	review.UserID = uint(id)
 
 	// Jika Judul Film Berbeda Pada Saat diedit, maka tidak bisa disimpan
 	if TitleReviewDatabase != review.Title {
