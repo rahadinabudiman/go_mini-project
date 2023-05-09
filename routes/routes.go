@@ -31,7 +31,7 @@ func New() *echo.Echo {
 	review.POST("", controllers.CreateReviewController, m.CheckLogin)
 	review.GET("", controllers.GetReviewsController, m.CheckLogin)
 	review.GET("/:id", controllers.GetReviewByIdController, m.CheckLogin)
-	review.DELETE("/:id", controllers.DeleteReviewByIdController, m.CheckLogin)
+	review.DELETE("/:id", controllers.DeleteReviewByIdController, m.CheckLogin, m.JWTValidator)
 	review.PUT("/:id", controllers.UpdateReviewByIdController, m.CheckLogin, m.JWTValidator)
 	review.GET("/title/:title", controllers.GetReviewByTitle, m.CheckLogin)
 

@@ -14,7 +14,7 @@ import (
 func CreateToken(id uint) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
-	claims["id"] = id
+	claims["userId"] = id
 	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(constants.SECRET_JWT))
@@ -62,13 +62,13 @@ func JWTValidator(next echo.HandlerFunc) echo.HandlerFunc {
 				Message: "Unauthorized",
 			})
 		}
-		id, ok := claims["id"].(float64)
+		id, ok := claims["userId"].(float64)
 		if !ok {
 			return c.JSON(http.StatusUnauthorized, models.Response{
 				Message: "Unauthorized",
 			})
 		}
-		c.Set("id", int(id))
+		c.Set("userId", int(id))
 		return next(c)
 	}
 }

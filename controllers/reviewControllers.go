@@ -114,7 +114,38 @@ func GetReviewByTitle(c echo.Context) error {
 
 // Delete Review by Id
 func DeleteReviewByIdController(c echo.Context) error {
-	ReviewId := c.Param("id")
+	ReviewId, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	// Mengambil ID dari Review
+	reviewID, err := database.GetReviewById(strconv.Itoa(int(ReviewId)))
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	id, ok := c.Get("userId").(int)
+	if !ok || id != int(reviewID.UserID) {
+		return c.JSON(http.StatusBadRequest, models.Response{
+			Message: "ID berbeda dengan user yang login",
+		})
+	}
+
+	// Mengambil ID dari Review
+	reviewIDBanget, err := database.GetReviewById(strconv.Itoa(int(ReviewId)))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	// Validasi jika mengedit review punya orang
+	if int(reviewIDBanget.UserID) != id {
+		return c.JSON(http.StatusBadRequest, models.Response{
+			Message: "Tidak Bisa Menghapus Review Orang Lain",
+		})
+	}
 
 	review, err := database.DeleteReview(ReviewId)
 
@@ -148,7 +179,7 @@ func UpdateReviewByIdController(c echo.Context) error {
 		})
 	}
 
-	id, ok := c.Get("id").(int)
+	id, ok := c.Get("userId").(int)
 	if !ok || id != int(review.UserID) {
 		return c.JSON(http.StatusBadRequest, models.Response{
 			Message: "ID berbeda dengan user yang login",
