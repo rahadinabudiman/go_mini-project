@@ -28,7 +28,7 @@ func New() *echo.Echo {
 
 	// Review Routes
 	review := e.Group("/reviews")
-	review.POST("", controllers.CreateReviewController, m.CheckLogin)
+	review.POST("", controllers.CreateReviewController, m.CheckLogin, m.JWTValidator)
 	review.GET("", controllers.GetReviewsController, m.CheckLogin)
 	review.GET("/:id", controllers.GetReviewByIdController, m.CheckLogin)
 	review.DELETE("/:id", controllers.DeleteReviewByIdController, m.CheckLogin, m.JWTValidator)

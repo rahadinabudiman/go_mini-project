@@ -89,6 +89,12 @@ func UpdateUserByIdController(c echo.Context) error {
 	user := models.User{}
 	c.Bind(&user)
 
+	if err := c.Validate(&user); err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response{
+			Message: err.Error(),
+		})
+	}
+
 	user, err := database.UpdateUser(user, UserId)
 
 	if err != nil {

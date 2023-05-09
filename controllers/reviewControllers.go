@@ -20,6 +20,15 @@ func CreateReviewController(c echo.Context) error {
 		})
 	}
 
+	id, ok := c.Get("userId").(int)
+	if !ok {
+		return c.JSON(http.StatusBadRequest, models.Response{
+			Message: "userId tidak ada",
+		})
+	}
+
+	review.UserID = uint(id)
+
 	// Fetch movie ID from TMDB API
 	movieID, err := database.GetMovieID(review.Title)
 	if err != nil {
@@ -172,10 +181,9 @@ func UpdateReviewByIdController(c echo.Context) error {
 	review := models.Review{}
 	c.Bind(&review)
 
-	if review.UserID == 0 || review.Title == "" || review.Ulasan == "" || review.Rating == 0 {
+	if err := c.Validate(&review); err != nil {
 		return c.JSON(http.StatusBadRequest, models.Response{
-			Message: "All fields are required",
-			Data:    nil,
+			Message: err.Error(),
 		})
 	}
 
