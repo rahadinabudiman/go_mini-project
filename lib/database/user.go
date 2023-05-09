@@ -88,7 +88,7 @@ func LoginUser(user models.User) (models.User, error) {
 	err := config.DB.Where("username = ? AND password = ?", user.Username, user.Password).First(&user).Error
 
 	if err != nil {
-		return models.User{}, nil
+		return models.User{}, err
 	}
 
 	return user, nil

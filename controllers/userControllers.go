@@ -5,7 +5,6 @@ import (
 	"go_mini-project/middlewares"
 	"go_mini-project/models"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo"
 )
@@ -18,9 +17,18 @@ func GetUsersController(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
+	userresp := make([]models.UserResponse, len(users))
+	for i, user := range users {
+		userresp[i] = models.UserResponse{
+			Name:     user.Name,
+			Username: user.Username,
+			Review:   user.Review,
+		}
+	}
+
 	return c.JSON(http.StatusOK, models.Response{
 		Message: "success get all user",
-		Data:    users,
+		Data:    userresp,
 	})
 }
 
@@ -34,9 +42,15 @@ func GetUserByIdController(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
+	userresp := models.UserResponse{
+		Name:     user.Name,
+		Username: user.Username,
+		Review:   user.Review,
+	}
+
 	return c.JSON(http.StatusOK, models.Response{
 		Message: "success get user by id",
-		Data:    user,
+		Data:    userresp,
 	})
 }
 
@@ -57,9 +71,14 @@ func CreateUserController(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
+	userresp := models.UserCreateResponse{
+		Name:     user.Name,
+		Username: user.Username,
+	}
+
 	return c.JSON(http.StatusOK, models.Response{
 		Message: "success create user",
-		Data:    user,
+		Data:    userresp,
 	})
 }
 
@@ -76,9 +95,14 @@ func UpdateUserByIdController(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
+	userresp := models.UserCreateResponse{
+		Name:     user.Name,
+		Username: user.Username,
+	}
+
 	return c.JSON(http.StatusOK, models.Response{
-		Message: "success update user by id",
-		Data:    user,
+		Message: "success update user",
+		Data:    userresp,
 	})
 }
 
@@ -129,31 +153,5 @@ func LoginUserController(c echo.Context) error {
 	return c.JSON(http.StatusOK, models.Response{
 		Message: "success login user",
 		Data:    respontoken,
-	})
-}
-
-// Detail Users Check by Id
-func GetUserDetailController(c echo.Context) error {
-	id, err := strconv.Atoi(c.Param("id"))
-
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, models.Response{
-			Message: "failed get user detail",
-			Data:    err.Error(),
-		})
-	}
-
-	users, err := database.GetDetailUsers((id))
-
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, models.Response{
-			Message: "failed get user detail",
-			Data:    err.Error(),
-		})
-	}
-
-	return c.JSON(http.StatusOK, models.Response{
-		Message: "success get user detail",
-		Data:    users,
 	})
 }

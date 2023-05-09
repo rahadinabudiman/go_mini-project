@@ -15,7 +15,7 @@ func New() *echo.Echo {
 	cv := &util.CustomValidator{Validators: validator.New()}
 	e.Validator = cv
 	// Login dan Register users
-	e.POST("/users/register", controllers.CreateUserController)
+	e.POST("/register", controllers.CreateUserController)
 	e.POST("/login", controllers.LoginUserController)
 	e.GET("/trending", controllers.GetTrendingController)
 
@@ -25,7 +25,6 @@ func New() *echo.Echo {
 	user.GET("/:id", controllers.GetUserByIdController, m.CheckLogin)
 	user.PUT("/:id", controllers.UpdateUserByIdController, m.CheckLogin)
 	user.DELETE("/:id", controllers.DeleteUserByIdController, m.CheckLogin)
-	user.GET("/profile/:id", controllers.GetUserDetailController, m.CheckLogin)
 
 	// Review Routes
 	review := e.Group("/reviews")

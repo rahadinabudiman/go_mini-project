@@ -12,6 +12,19 @@ type User struct {
 	Review   []Review `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
+// For Response User
+type UserResponse struct {
+	Name     string   `json:"name" form:"name" validate:"required"`
+	Username string   `json:"username" form:"username" validate:"required"`
+	Review   []Review `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+}
+
+// For Response User Create
+type UserCreateResponse struct {
+	Name     string `json:"name" form:"name" validate:"required"`
+	Username string `json:"username" form:"username" validate:"required"`
+}
+
 // For Token Only
 type UerToken struct {
 	Name     string `json:"name" form:"name"`
