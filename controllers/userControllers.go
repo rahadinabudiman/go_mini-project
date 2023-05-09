@@ -45,6 +45,12 @@ func CreateUserController(c echo.Context) error {
 	user := models.User{}
 	c.Bind(&user)
 
+	if err := c.Validate(&user); err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response{
+			Message: err.Error(),
+		})
+	}
+
 	user, err := database.CreateUser(user)
 
 	if err != nil {

@@ -48,3 +48,34 @@ func GetMovieID(title string) (int, error) {
 	}
 	return 0, fmt.Errorf("movie not found")
 }
+
+func GetMovieIDToTitle(id int) (string, error) {
+	API_KEY := "0bf8630ff9d3ff478b4f4bb3b8029338"
+
+	// Build URL
+	url := fmt.Sprintf("https://api.themoviedb.org/3/movie/%d?api_key=%s&language=en-US", id, API_KEY)
+
+	// Send HTTP request
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	// Read response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	// Parse JSON response
+	var result struct {
+		Title string `json:"title"`
+	}
+	if err := json.Unmarshal(body, &result); err != nil {
+		return "", err
+	}
+
+	// Return movie title
+	return result.Title, nil
+}

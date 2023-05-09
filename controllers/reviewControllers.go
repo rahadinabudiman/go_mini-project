@@ -14,10 +14,9 @@ func CreateReviewController(c echo.Context) error {
 	review := models.Review{}
 	c.Bind(&review)
 
-	if review.UserID == 0 || review.Title == "" || review.Ulasan == "" || review.Rating == 0 {
+	if err := c.Validate(&review); err != nil {
 		return c.JSON(http.StatusBadRequest, models.Response{
-			Message: "All fields are required",
-			Data:    nil,
+			Message: err.Error(),
 		})
 	}
 
@@ -27,6 +26,14 @@ func CreateReviewController(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 	review.MovieID = movieID
+
+	judulBaru, err := database.GetMovieIDToTitle(review.MovieID)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	review.Title = judulBaru
 
 	// Save review to database
 	review, err = database.CreateReview(review)
