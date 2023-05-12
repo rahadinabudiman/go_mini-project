@@ -31,7 +31,7 @@ func InitDB() {
 		DB_Username: "root",
 		DB_Password: "password",
 		DB_Port:     "3306",
-		DB_Host:     "localhost",
+		DB_Host:     "go-mini-project.cjlpgrpxfahb.ap-southeast-1.rds.amazonaws.com",
 		DB_Name:     "gominiproject",
 	}
 
