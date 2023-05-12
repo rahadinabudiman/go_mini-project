@@ -29,10 +29,10 @@ func InitDB() {
 
 	config := Config{
 		DB_Username: "root",
-		DB_Password: "",
+		DB_Password: "password",
 		DB_Port:     "3306",
 		DB_Host:     "localhost",
-		DB_Name:     "go_review_movie",
+		DB_Name:     "gominiproject",
 	}
 
 	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
