@@ -102,6 +102,10 @@ func GetReviewByTitle(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
+	if len(reviews) == 0 {
+		return c.JSON(http.StatusNotFound, "No reviews found for title "+title)
+	}
+
 	name, err := database.GetUserByIdReview(reviews[0].UserID)
 
 	if err != nil {
